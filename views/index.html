@@ -1,0 +1,201 @@
+
+<!doctype html>
+<html>
+<head>
+	<title>Login</title>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+	<style>
+  #mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9000;
+  background-color: #000;
+  display: none;
+}
+
+#boxes .window {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 440px;
+  height: 200px;
+  display: none;
+  z-index: 9999;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+#boxes #dialog {
+  width: 750px;
+  height: 300px;
+  padding: 10px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI Light', sans-serif;
+  font-size: 15pt;
+}
+
+#popupfoot {
+  font-size: 16pt;
+  position: absolute;
+  bottom: 0px;
+  width: 250px;
+  left: 250px;
+}
+  </style>
+</head>
+<body>
+
+  <center><strong>Hello <%= email %></strong></center><br>
+  <center><button  type="button" id="edit" class="waves-effect waves-light btn"  >Edit</button></center><br><br>
+
+	<div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+			<h3>Edit Profile</h3><hr>
+      <h5>Edit Delievery Address</h5>
+      <form method="post" action="/formsubmit">
+      Enter Pincode :<input type="text" maxlength="6"  name="pincode" id="validpin"  autofocus>
+      <button type="button" onclick="valid()">Check Address Serviced or not</button>  <span id="result"></span><br><br>
+      Address:<input type="text" id="address" name="address" required>
+      Landmark(optional) <input type="text" id="landmark" name="landmark" />
+      City: <input type="text" id="city" name="city" required>
+      State: <input type="text" id="state" name="state" required>
+			<center><button  type="submit"  id="save" class="waves-effect waves-light btn"  disabled>Save</button></center><br>
+			</form>
+			<h5>Delete Account</h5>
+			<button  type="button" id="delete" onclick="deleted()" class="waves-effect" style="color:red;" >Delete</button><br><br>
+    </div>
+    <div class="modal-footer">
+    <button  type="button"   onclick="closed()" class="modal-action modal-close waves-effect waves-green btn-flat " >Close</button>
+
+    </div>
+  </div>
+
+
+  <center><button type='button' id='l'>LogoutApp</button></center>
+
+
+  <script>
+
+  function deleted(){
+	$.get('/delete').done(function(){
+		window.location.replace('https://mail.google.com/mail/u/0/?logout&hl=en');
+	});
+	}
+
+  function closed(){
+		$('#save').attr("disabled","true");
+		$('#modal1').hide();
+	}
+
+	function valid(){
+	  var pincode = $('#validpin').val();
+
+	  if(pincode.length === 6){
+	    $.get('/validpincode',{pin:pincode}).done(function(data){
+	      console.log(data);
+	        if(data==="Available"){
+	          $('#result').css("color","green");
+	          $('#result').html(data);
+	          $('#save').css('cursor','default');
+	          $('#save').attr("disabled" , false);
+	        }else{
+	          $('#result').css("color","red");
+	          $('#result').html(data);
+	          $('#save').css('cursor','not-allowed');
+	          $('#save').attr("disabled",true);
+	        }
+
+	    });
+	  }
+	  else{
+	    $('#result').css("color","blue");
+	    $('#result').html("Pincode less than 6 character");
+	    $('#save').css('cursor','not-allowed');
+	    $('#save').attr("disabled" , true);
+	  }
+	}
+
+  $(document).ready(function(){
+    $("#l").click(function(){
+        $.get('/logout').done(function(){
+          window.location.replace('https://mail.google.com/mail/u/0/?logout&hl=en');
+        });
+
+
+    });
+});
+
+$(document).ready(function() {
+	$('#edit').click(function(){
+
+    $.get('/getadd').done(function(data){
+			console.log(data);
+			console.log(data.address[0].pincode);
+			$('#validpin').attr("value",data.address[0].pincode);
+			$('#address').attr("value",data.address[0].address);
+			$('#city').attr("value",data.address[0].city);
+			$('#landmark').attr("value",data.address[0].landmark);
+			$('#state').attr("value",data.address[0].state);
+			$('#result').html("");
+		});
+
+		var id = '#modal1';
+
+		//Get the screen height and width
+		var maskHeight = $(document).height();
+		var maskWidth = $(window).width();
+
+		//Set heigth and width to mask to fill up the whole screen
+		$('#mask').css({'width':maskWidth,'height':maskHeight});
+
+		//transition effect
+		$('#mask').fadeIn(500);
+		$('#mask').fadeTo("slow",0.9);
+
+		//Get the window height and width
+		var winH = $(window).height();
+		var winW = $(window).width();
+
+		//Set the popup window to center
+		$(id).css('top',  (winH/2-$(id).height()/2));
+		$(id).css('left', (winW/2-$(id).width()/2)-150);
+
+		//transition effect
+		$(id).fadeIn(2000);
+
+		//if close button is clicked
+		$('.window .close').click(function (e) {
+		//Cancel the link behavior
+		e.preventDefault();
+
+		$('#mask').hide();
+		$('.window').hide();
+		});
+
+		//if mask is clicked
+		$('#mask').click(function () {
+		$(this).hide();
+		$('.window').hide();
+		});
+	})
+
+
+
+});
+
+
+  </script>
+</body>
+</html>

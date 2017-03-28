@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+	<title>Signup</title>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"-->
+
+</head>
+<body >
+
+  <div class="container"><h4>SignUp</h4><br><br>
+    <form class="col s12" method="POST">
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="email" type="email" class="validate" required="required" name="email" autofocus>
+          <label for="email">Email</label>
+        </div>
+      </div>
+			<p id="result"></p>
+      <div class="row">
+        <div class="input-field col s12">
+          <input id="password" type="password" class="validate" name="password" required="required">
+          <label for="password">Password</label>
+        </div>
+      </div>
+
+			<button class="btn waves-effect waves-light" id="submit" type="submit" value="Register" disabled>Submit
+     <i class="material-icons right">send</i>
+   </button>
+    </form>
+		<center><h5>OR</h5></center>
+		<center><a href="/login">Login</a></center>
+  </div>
+	<hr>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+  <script>
+
+
+$(document).ready(function() {
+	$('#email').val(" ");
+});
+
+  $('#email').change(function(){
+		var checkemail =   $('#email').val();
+		//console.log(email);
+		$.get('/checkemail',{email:checkemail}).done(function(data){
+			if(data === "User Already Exist!!"){
+				$('#result').css("color","red");
+				$('#result').html(data);
+			}else{
+				$('#submit').attr("disabled",false);
+				$('#result').html(" ");
+			  }
+
+
+		});
+	});
+  </script>
+</body>
+</html>

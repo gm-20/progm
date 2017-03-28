@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+	<title>Login</title>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <meta name="google-signin-client_id" content="825185065832-q1jvajdcc4ob5fn7v1g9h917q9r02ga7.apps.googleusercontent.com">
+</head>
+<body>
+	<div class="container">
+		<p>Login</p>
+	 <form class="col s12" method="POST" action="/loginf">
+		 <div class="row">
+			 <div class="input-field col s6">
+				 <input  id="first_name" type="email" class="validate" name="email" required="required">
+				 <label for="first_name">Email:</label>
+			 </div>
+		 </div>
+		 <div class="row">
+			 <div class="input-field col s12">
+				 <input id="password" type="password" class="validate" name="password" required="required">
+				 <label for="password">Password:</label>
+			 </div>
+		 </div>
+		 <button class="btn waves-effect waves-light" type="submit" value="login">Submit
+    <i class="material-icons right">send</i>
+  </button>
+	 </form>
+ </div>
+ <hr>
+ <center>or</center>
+   <center><div class="g-signin2" data-onsuccess="onSignIn"></div></center>
+<hr>
+
+ <div style="text-align:center">
+   or<br>
+ <a href="/signup" class="waves-effect waves-light btn"  >Sign Up</a>
+
+ </div>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+  <script>
+
+  function onSignIn(user){
+        var profile = user.getBasicProfile();
+        var email = profile.getEmail();
+        $.post("http://localhost:8080/loging",{email:email},function(data,status){
+        }).done(function(data){
+					if(data===1)
+					window.location.replace('http:/postadd');
+					else {
+						window.location.replace('http:/');
+					}
+        });
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+	<title>Login</title>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <meta name="google-signin-client_id" content="825185065832-q1jvajdcc4ob5fn7v1g9h917q9r02ga7.apps.googleusercontent.com">
+  <style>
+  #mask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9000;
+  background-color: #000;
+  display: none;
+}
+
+#boxes .window {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 440px;
+  height: 200px;
+  display: none;
+  z-index: 9999;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+#boxes #dialog {
+  width: 750px;
+  height: 300px;
+  padding: 10px;
+  background-color: #ffffff;
+  font-family: 'Segoe UI Light', sans-serif;
+  font-size: 15pt;
+}
+
+#popupfoot {
+  font-size: 16pt;
+  position: absolute;
+  bottom: 0px;
+  width: 250px;
+  left: 250px;
+}
+  </style>
+</head>
+<body>
+
+	
+
+  <div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Delievery Address</h4>
+      <form method="post" action="/formsubmit">
+      Enter Pincode :<input type="text" maxlength="6" name="pincode" id="validpin" autofocus>
+      <button type="button" onclick="valid()">Check Address Serviced or not</button>  <span id="result"></span><br><br>
+      Address:<input type="text" name="address" required>
+      Landmark(optional) <input type="text" name="landmark" />
+      City: <input type="text" name="city" required>
+      State: <input type="text" name="state" required>
+    </div>
+    <div class="modal-footer">
+      <button  type="submit" id="submit" class="modal-action modal-close waves-effect waves-green btn-flat " disabled>Submit</button>
+    </form>
+    </div>
+  </div>
+
+<script>
+
+function valid(){
+  var pincode = $('#validpin').val();
+
+  if(pincode.length === 6){
+    $.get('/validpincode',{pin:pincode}).done(function(data){
+      console.log(data);
+        if(data==="Available"){
+          $('#result').css("color","green");
+          $('#result').html(data);
+          $('#submit').css('cursor','default');
+          $('#submit').attr("disabled" , false);
+        }else{
+          $('#result').css("color","red");
+          $('#result').html(data);
+          $('#submit').css('cursor','not-allowed');
+          $('#submit').attr("disabled",true);
+        }
+
+    });
+  }
+  else{
+    $('#result').css("color","blue");
+    $('#result').html("Pincode less than 6 character");
+    $('#submit').css('cursor','not-allowed');
+    $('#submit').attr("disabled" , true);
+  }
+}
+
+
+$(document).ready(function() {
+
+var id = '#modal1';
+
+//Get the screen height and width
+var maskHeight = $(document).height();
+var maskWidth = $(window).width();
+
+//Set heigth and width to mask to fill up the whole screen
+$('#mask').css({'width':maskWidth,'height':maskHeight});
+
+//transition effect
+$('#mask').fadeIn(500);
+$('#mask').fadeTo("slow",0.9);
+
+//Get the window height and width
+var winH = $(window).height();
+var winW = $(window).width();
+
+//Set the popup window to center
+$(id).css('top',  (winH/2-$(id).height()/2));
+$(id).css('left', (winW/2-$(id).width()/2)-150);
+
+//transition effect
+$(id).fadeIn(2000);
+
+//if close button is clicked
+$('.window .close').click(function (e) {
+//Cancel the link behavior
+e.preventDefault();
+
+$('#mask').hide();
+$('.window').hide();
+});
+
+//if mask is clicked
+$('#mask').click(function () {
+$(this).hide();
+$('.window').hide();
+});
+
+});
+</script>
+</body>
+</html>
