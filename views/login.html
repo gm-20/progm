@@ -46,7 +46,7 @@
   function onSignIn(user){
         var profile = user.getBasicProfile();
         var email = profile.getEmail();
-        $.post("http://localhost:8080/loging",{email:email},function(data,status){
+        $.post("http://progm.herokuapp.com/loging",{email:email},function(data,status){
         }).done(function(data){
 					if(data===1)
 					window.location.replace('http:/postadd');
