@@ -139,7 +139,7 @@
 
 $(document).ready(function() {
 	$('#edit').click(function(){
-
+      
     $.get('/getadd').done(function(data){
 			console.log(data);
 			console.log(data.address[0].pincode);
